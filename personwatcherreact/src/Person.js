@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { ButtonToolbar, Button, Table } from 'react-bootstrap';
 import {AddPersonModal} from './AddPersonModal';
 import { EditPersonModal } from './EditPersonModal';
-import SearchBar from './SearchBar';
+import SearchBar from './SearchBar.js';
 
 import moment from 'moment';
 const SEARCH_PERSON_URI = process.env.REACT_APP_API+'Person';

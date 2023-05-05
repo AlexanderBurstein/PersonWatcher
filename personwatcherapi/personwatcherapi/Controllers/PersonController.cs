@@ -33,7 +33,11 @@ namespace personwatcherapi.Controllers
         [Route("Rank")]
         public async Task<IEnumerable<Person>> GetRanks()
         {
-            var persons = await _context.Persons.Where(x=> x.NextStart > DateTime.Now.AddMinutes(-30) && x.NextStart < DateTime.Now.AddHours(13)).ToListAsync<Person>();
+            var interestPosList = Calculator.GetInstance().GetCurrentPositionInterests();
+            var persons = await _context.Persons.Where(x=> x.NextStart > DateTime.Now.AddMinutes(-30) && x.NextStart < DateTime.Now.AddHours(13)
+            || interestPosList.Contains(x.SunPos) || interestPosList.Contains(x.MoonPos) || interestPosList.Contains(x.VenusPos)
+            || interestPosList.Contains(x.MarsPos) || interestPosList.Contains(x.JupiterPos) || interestPosList.Contains(x.SaturnPos)
+            || interestPosList.Contains(x.NeptunePos)).ToListAsync<Person>();
             var placeIds = persons.Select(x => x.PlaceId).ToList();
             return Calculator.GetInstance().Ranks(persons, _context.Places.Where(x=>placeIds.Contains(x.PlaceId)));
         }
@@ -62,6 +66,7 @@ namespace personwatcherapi.Controllers
         {
             if (id != person.PersonId) return BadRequest();
 
+            Calculator.GetInstance().TransformPerson(ref person);
             person.Place = null;
             _context.Entry(person).State = EntityState.Modified;
             await _context.SaveChangesAsync();
