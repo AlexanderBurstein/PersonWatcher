@@ -62,7 +62,7 @@ export class Ranking extends Component {
                                 <td>{person.venusPos}</td>
                                 <td>{person.marsPos}</td>
                                 <td>{person.saturnPos}</td>
-                                <td>{person.jupiterPos}</td>
+                                <td>{moment(person.nextStart).add(person.jupiterPos, 'minute').format('HH:mm')}</td>
                                 <td>{person.neptunePos}</td>
                             </tr>)}
                     </tbody>
