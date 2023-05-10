@@ -35,6 +35,7 @@ export class Ranking extends Component {
                             <th>Next Start</th>
                             <th>Pluses</th>
                             <th>Minuses</th>
+                            <th>Predictability</th>
                             <th>Sign Matches</th>
                             <th>Young</th>
                             <th>Experienced</th>
@@ -59,6 +60,7 @@ export class Ranking extends Component {
                                 </If>
                                 <td>{person.sunPos}</td>
                                 <td>{person.moonPos}</td>
+                                <td>{person.eventPredictability}</td>
                                 <td>{person.venusPos}</td>
                                 <td>{person.marsPos}</td>
                                 <td>{person.saturnPos}</td>

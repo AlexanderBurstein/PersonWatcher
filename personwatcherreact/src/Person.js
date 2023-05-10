@@ -78,6 +78,7 @@ export class Person extends Component {
                                             personid:person.personId,
                                             personname:person.name,
                                             eventype:person.eventType,
+                                            eventpredictability:person.eventPredictability,
                                             birthdate:person.birthdate,
                                             nextstart:person.nextStart})}>
                                                 Edit
@@ -105,6 +106,7 @@ export class Person extends Component {
                             personid={personid}
                             personname={personname}
                             eventtype={eventtype}
+                            eventpredictabilty={eventpredictability}
                             birthdate={birthdate}
                             nextstart={nextstart}/>
                 </ButtonToolbar>

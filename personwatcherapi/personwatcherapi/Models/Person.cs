@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace personwatcherapi.Models
@@ -39,6 +40,9 @@ namespace personwatcherapi.Models
         public DateTime NextStart { get; set; }
         [Required]
         public int PlaceId { get; set; }
+        [Required]
+        [DefaultValue(0)]
+        public int EventPredictability { get; set; }
         [ForeignKey("PlaceId")]
         public Place Place { get; set; }
     }

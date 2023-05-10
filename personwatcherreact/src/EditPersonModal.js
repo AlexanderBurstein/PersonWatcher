@@ -37,6 +37,7 @@ export class EditPersonModal extends Component {
                 JupiterPos:"360",
                 SaturnPos:"360",
                 NeptunePos:"360",
+                EventPredictability:event.target.EventPredictability.value,
                 PlaceId:this.state.place.placeId,
                 Place:
                 {
@@ -95,6 +96,11 @@ export class EditPersonModal extends Component {
                                             <option value="1">1</option>
                                             <option value="2">2</option>
                                         </Form.Control>
+                                    </Form.Group>
+                                    <Form.Group controlId="EventPredictability">
+                                        <Form.Label>Predictability</Form.Label>
+                                        <Form.Control type="number" name="EventPredictability" required
+                                        defaultValue="0" />
                                     </Form.Group>
                                     <Form.Group controlId="Birthdate">
                                         <Form.Label>Birthdate</Form.Label>
