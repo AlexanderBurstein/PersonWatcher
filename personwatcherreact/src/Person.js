@@ -50,7 +50,7 @@ export class Person extends Component {
       }
 
     render() {
-        const {persons, personid, personname, eventtype, birthdate, nextstart, keyword}=this.state;
+        const {persons, personid, personname, eventtype, eventpredictability, birthdate, nextstart, keyword}=this.state;
         let addModalClose=dateStr=>{this._birthdaySearch(dateStr);this.setState({addModalShow:false, keyword:''})};
         let editModalClose=dateStr=>{this._birthdaySearch(dateStr);this.setState({editModalShow:false, keyword:''})};
             return (

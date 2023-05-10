@@ -100,7 +100,7 @@ export class EditPersonModal extends Component {
                                     <Form.Group controlId="EventPredictability">
                                         <Form.Label>Predictability</Form.Label>
                                         <Form.Control type="number" name="EventPredictability" required
-                                        defaultValue="0" />
+                                        defaultValue={this.props.eventpredictability} />
                                     </Form.Group>
                                     <Form.Group controlId="Birthdate">
                                         <Form.Label>Birthdate</Form.Label>
