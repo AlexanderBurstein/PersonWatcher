@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import {Modal, Button, Row, Col, Form} from 'react-bootstrap';
 import {PlaceTypeahead} from './PlaceTypeahead';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export class EditPersonModal extends Component {
     constructor(props){
@@ -51,6 +53,7 @@ export class EditPersonModal extends Component {
         })
         .then(res=>res.json())
         .then((result)=>{
+            toast.success(result.eventPredictability);
             this.props.onHide(event.target.Birthdate.value);
         },
         (error)=>{
@@ -132,6 +135,7 @@ export class EditPersonModal extends Component {
                             }}>Close</Button>
                     </Modal.Footer>
                 </Modal>
+                <ToastContainer />
             </div>
         )
     }

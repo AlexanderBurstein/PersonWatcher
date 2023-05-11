@@ -55,6 +55,7 @@ namespace personwatcherapi.Controllers
             person.Place = null;
             await _context.Persons.AddAsync(person);
             await _context.SaveChangesAsync();
+            person.EventPredictability = Calculator.GetInstance().SignifyRanking(person, _context.Places.Find(person.PlaceId));
             return CreatedAtAction(nameof(GetById), new {personId = person.PersonId}, person);
         }
         [HttpPut("{id}")]
@@ -68,7 +69,8 @@ namespace personwatcherapi.Controllers
             person.Place = null;
             _context.Entry(person).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { personId = person.PersonId }, person); ;
+            person.EventPredictability = Calculator.GetInstance().SignifyRanking(person, _context.Places.Find(person.PlaceId));
+            return CreatedAtAction(nameof(GetById), new { personId = person.PersonId }, person); 
         }
     }
 }
