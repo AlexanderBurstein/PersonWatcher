@@ -37,6 +37,14 @@ namespace personwatcherapi.Models
         [Range(0, 360)]
         public int NeptunePos { get; set; }
         [Required]
+        [Range(0, 360)]
+        [DefaultValue(0)]
+        public int MercuryPos { get; set; }
+        [Required]
+        [Range(0, 360)]
+        [DefaultValue(0)]
+        public int UranusPos { get; set; }
+        [Required]
         public DateTime NextStart { get; set; }
         [Required]
         public int PlaceId { get; set; }
