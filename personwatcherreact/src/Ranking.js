@@ -23,7 +23,6 @@ export class Ranking extends Component {
 
     render() {
         const {persons, personid}=this.state;
-        const currentDate = moment(new Date());
         let addModalClose=()=>this.setState({addModalShow:false});
         let editModalClose=()=>this.setState({editModalShow:false});
            return (
@@ -35,10 +34,10 @@ export class Ranking extends Component {
                             <th>Next Start</th>
                             <th>Pluses</th>
                             <th>Minuses</th>
-                            <th>Predictability</th>
                             <th>Sign Matches</th>
-                            <th>Young</th>
-                            <th>Experienced</th>
+                            <th>Moon point</th>
+                            <th>Jupiter point</th>
+                            <th>Neptune point</th>
                             <th>Next Action</th>
                             <th>Impulsivity</th>
                         </tr>
@@ -47,24 +46,49 @@ export class Ranking extends Component {
                         {persons.map(person=>
                             <tr key={person.personId}>
                                 <td>{person.name}</td>
-                                <If condition={moment(person.nextStart).diff(currentDate, 'minutes') < -180}>
-                                    <Then>
-                                        <td style={{backgroundColor:"coral"}}>{moment(person.nextStart).calendar()}</td>
-                                    </Then>
-                                    <ElseIf condition={moment(person.nextStart).diff(currentDate, 'minutes') < 15}>
-                                        <td style={{backgroundColor:"turquoise"}}>{moment(person.nextStart).calendar()}</td>
-                                    </ElseIf>
-                                    <Else>
-                                        <td>{moment(person.nextStart).calendar()}</td>
-                                    </Else>
-                                </If>
+                                <td>{moment(person.nextStart).calendar()}</td>
                                 <td>{person.sunPos}</td>
                                 <td>{person.moonPos}</td>
-                                <td>{person.eventPredictability}</td>
-                                <td>{person.venusPos}</td>
-                                <td>{person.marsPos}</td>
-                                <td>{person.saturnPos}</td>
-                                <td>{moment(person.nextStart).add(person.jupiterPos, 'minute').format('HH:mm')}</td>
+                                <If condition={person.venusPos > 6}>
+                                    <Then>
+                                        <td style={{backgroundColor:"aquamarine"}}>{person.venusPos}</td>
+                                    </Then>
+                                    <Else>
+                                        <td>{person.venusPos}</td>
+                                    </Else>
+                                </If>                                
+                                <If condition={person.marsPos < 15}>
+                                    <Then>
+                                        <td style={{backgroundColor:"turquoise"}}>{moment(new Date()).add(person.marsPos, 'minute').format('HH:mm')}</td>
+                                    </Then>
+                                    <Else>
+                                        <td>{moment(new Date()).add(person.marsPos, 'minute').format('HH:mm')}</td>
+                                    </Else>
+                                </If>
+                                <If condition={person.mercuryPos < 15}>
+                                    <Then>
+                                        <td style={{backgroundColor:"turquoise"}}>{moment(new Date()).add(person.mercuryPos, 'minute').format('HH:mm')}</td>
+                                    </Then>
+                                    <Else>
+                                        <td>{moment(new Date()).add(person.mercuryPos, 'minute').format('HH:mm')}</td>
+                                    </Else>
+                                </If>
+                                <If condition={person.uranusPos < 15}>
+                                    <Then>
+                                        <td style={{backgroundColor:"turquoise"}}>{moment(new Date()).add(person.uranusPos, 'minute').format('HH:mm')}</td>
+                                    </Then>
+                                    <Else>
+                                        <td>{moment(new Date()).add(person.uranusPos, 'minute').format('HH:mm')}</td>
+                                    </Else>
+                                </If>
+                                <If condition={person.jupiterPos < 15}>
+                                    <Then>
+                                        <td style={{backgroundColor:"turquoise"}}>{moment(new Date()).add(person.jupiterPos, 'minute').format('HH:mm')}</td>
+                                    </Then>
+                                    <Else>
+                                        <td>{moment(new Date()).add(person.jupiterPos, 'minute').format('HH:mm')}</td>
+                                    </Else>
+                                </If>
                                 <td>{person.neptunePos}</td>
                             </tr>)}
                     </tbody>

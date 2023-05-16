@@ -3,6 +3,7 @@ import {Modal, Button, Row, Col, Form} from 'react-bootstrap';
 import {PlaceTypeahead} from './PlaceTypeahead';
 import { ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import moment from 'moment';
 
 export class AddPersonModal extends Component {
     constructor(props){
@@ -53,7 +54,9 @@ export class AddPersonModal extends Component {
         })
         .then(res=>res.json())
         .then((result)=>{
-            toast.success(result.eventPredictability);
+            toast.success(result.eventPredictability +
+                " ; " + result.venusPos +
+                " ; " + moment(new Date()).add(result.uranusPos, 'minute').format('HH:mm'));
             this.props.onHide(event.target.Birthdate.value);
         },
         (error)=>{

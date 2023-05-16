@@ -34,7 +34,7 @@ namespace personwatcherapi.Controllers
         public async Task<IEnumerable<Person>> GetRanks()
         {
             var interestPosList = Calculator.GetInstance().GetCurrentPositionInterests();
-            var persons = await _context.Persons.Where(x=> x.NextStart > DateTime.Now.AddHours(-5) 
+            var persons = await _context.Persons.Where(x=> x.NextStart > DateTime.Now.AddHours(-2) 
             && x.NextStart < DateTime.Now.AddHours(13)).ToListAsync<Person>();
             var placeIds = persons.Select(x => x.PlaceId).ToList();
             return Calculator.GetInstance().Ranks(persons, _context.Places.Where(x=>placeIds.Contains(x.PlaceId)));
@@ -55,7 +55,8 @@ namespace personwatcherapi.Controllers
             person.Place = null;
             await _context.Persons.AddAsync(person);
             await _context.SaveChangesAsync();
-            person.EventPredictability = Calculator.GetInstance().SignifyRanking(person, _context.Places.Find(person.PlaceId));
+            (person.EventPredictability, person.VenusPos, person.UranusPos) 
+                = Calculator.GetInstance().SignifyRanking(person, _context.Places.Find(person.PlaceId));
             return CreatedAtAction(nameof(GetById), new {personId = person.PersonId}, person);
         }
         [HttpPut("{id}")]
@@ -69,7 +70,8 @@ namespace personwatcherapi.Controllers
             person.Place = null;
             _context.Entry(person).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            person.EventPredictability = Calculator.GetInstance().SignifyRanking(person, _context.Places.Find(person.PlaceId));
+            (person.EventPredictability, person.VenusPos, person.UranusPos)
+                = Calculator.GetInstance().SignifyRanking(person, _context.Places.Find(person.PlaceId));
             return CreatedAtAction(nameof(GetById), new { personId = person.PersonId }, person); 
         }
     }
