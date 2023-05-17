@@ -49,7 +49,23 @@ export class Ranking extends Component {
                                 <td>{moment(person.nextStart).calendar()}</td>
                                 <td>{person.sunPos}</td>
                                 <td>{person.moonPos}</td>
-                                <td class="astro">{person.extraInfo}</td>
+                                <If condition={person.extraInfo.startsWith("1")}>
+                                    <Then>
+                                        <td class="astro" style={{backgroundColor:"lightgreen"}}>{person.extraInfo.substring(1)}</td>
+                                    </Then>
+                                    <ElseIf condition={person.extraInfo.startsWith("2")}>
+                                        <td class="astro" style={{backgroundColor:"lightpink"}}>{person.extraInfo.substring(1)}</td>
+                                    </ElseIf>
+                                    <ElseIf condition={person.extraInfo.startsWith("3")}>
+                                        <td class="astro" style={{backgroundColor:"aqua"}}>{person.extraInfo.substring(1)}</td>
+                                    </ElseIf>
+                                    <ElseIf condition={person.extraInfo.startsWith("4")}>
+                                        <td class="astro" style={{backgroundColor:"plum"}}>{person.extraInfo.substring(1)}</td>
+                                    </ElseIf>
+                                    <Else>
+                                        <td class="astro">{person.extraInfo.substring(1)}</td>
+                                    </Else>
+                                </If>
                                 <If condition={person.marsPos < 15}>
                                     <Then>
                                         <td style={{backgroundColor:"turquoise"}}>{moment(new Date()).add(person.marsPos, 'minute').format('HH:mm')}</td>
