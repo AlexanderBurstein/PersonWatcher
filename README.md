@@ -6,4 +6,5 @@ Here are some screenshots for the illustration:
 ![3](https://user-images.githubusercontent.com/125572952/235642158-f0f7d102-3813-46f1-8664-a4422809a2b9.jpg)
 ![4](https://user-images.githubusercontent.com/125572952/235642165-a07fe44f-11a4-4105-b530-aaeacaec98d9.jpg)
 Astro font added update:
-![1](https://github.com/AlexanderBurstein/PersonWatcher/assets/125572952/40c9f15d-2d37-41a8-ad23-57cab4da71f9)
+![1](https://github.com/AlexanderBurstein/PersonWatcher/assets/125572952/8060b14d-1bc4-42b7-ba98-ca2f5a5dd2b8)
+
