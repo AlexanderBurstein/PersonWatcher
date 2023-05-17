@@ -41,6 +41,7 @@ export class EditPersonModal extends Component {
                 SaturnPos:"360",
                 NeptunePos:"360",
                 EventPredictability:event.target.EventPredictability.value,
+                ExtraInfo:"",
                 PlaceId:this.state.place.placeId,
                 Place:
                 {
@@ -54,6 +55,7 @@ export class EditPersonModal extends Component {
         })
         .then(res=>res.json())
         .then((result)=>{
+            console.log(result);
             toast.success(result.eventPredictability +
                 " ; " + result.venusPos +
                 " ; " + moment(new Date()).add(result.uranusPos, 'minute').format('HH:mm'));
