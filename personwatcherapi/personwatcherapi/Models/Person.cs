@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace personwatcherapi.Models
 {
@@ -53,6 +54,8 @@ namespace personwatcherapi.Models
         public int EventPredictability { get; set; }
         [ForeignKey("PlaceId")]
         public Place Place { get; set; }
+        [NotMapped]
+        public string ExtraInfo { get; set; }
     }
     public enum EventType
     {

@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using personwatcherapi.Data;
 using personwatcherapi.Engine;
 using personwatcherapi.Models;
+using System.Net;
+using System.Text;
+using System.Text.Json.Nodes;
 
 namespace personwatcherapi.Controllers
 {
@@ -73,6 +76,12 @@ namespace personwatcherapi.Controllers
             (person.EventPredictability, person.VenusPos, person.UranusPos)
                 = Calculator.GetInstance().SignifyRanking(person, _context.Places.Find(person.PlaceId));
             return CreatedAtAction(nameof(GetById), new { personId = person.PersonId }, person); 
+        }
+        [HttpGet]
+        [Route("Header")]
+        public IActionResult GetHeader()
+        {
+            return Content("{\"data\": \"" + Calculator.GetInstance().GetHeader() + "\"}");
         }
     }
 }
