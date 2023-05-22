@@ -56,6 +56,10 @@ namespace personwatcherapi.Models
         public Place Place { get; set; }
         [NotMapped]
         public string ExtraInfo { get; set; }
+        public int HowCloseToSunAndMoon(int sunPose, int moonPose)
+        {
+            return 12 * (this.SunPos >= sunPose ? this.SunPos - sunPose : 360) + (this.MoonPos >= moonPose && this.MoonPos / 30 == moonPose / 30 ? this.MoonPos - moonPose : 360);
+        }
     }
     public enum EventType
     {

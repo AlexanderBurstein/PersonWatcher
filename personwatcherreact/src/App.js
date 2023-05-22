@@ -9,18 +9,22 @@ import {Ranking} from './Ranking';
 import {Navigation} from './Navigation';
 
 function App() {
+  const MINUTE_MS = 60000;
   const [header, setHeader] = useState(); 
   const getApiData = async () => {
     const response = await fetch(
       process.env.REACT_APP_API+'Person/Header'
     ).then((response) => response.json());
-  console.log(response);
     // update the state
     setHeader(response.data);
   };
 
-  useEffect(() => {
-    getApiData();
+  useEffect(() => {const interval = setInterval(() => {
+      getApiData();
+   }, MINUTE_MS);
+
+    return () => clearInterval(interval);
+    
   }, []);
 
   return (

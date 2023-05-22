@@ -14,7 +14,7 @@ namespace personwatcherapi.Controllers
         private readonly PersonWatcherDbContext _context;
         public PlaceController(PersonWatcherDbContext context) => _context = context;
         [HttpGet]
-        public async Task<IEnumerable<Place>> GetPlaces(string searchStr = "")
+        public async Task<IEnumerable<Place>> GetPlacesAsync(string searchStr = "")
         {
             if (string.IsNullOrWhiteSpace(searchStr) || searchStr.Length < 3) 
             {
@@ -25,7 +25,7 @@ namespace personwatcherapi.Controllers
         [HttpGet("id")]
         [ProducesResponseType(typeof(Place), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(int placeId)
+        public async Task<IActionResult> GetByIdAsync(int placeId)
         {
             var place = await _context.Places.FindAsync(placeId);
             return place == null ? NotFound() : Ok(place);

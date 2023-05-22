@@ -16,7 +16,7 @@ namespace personwatcherapi.Controllers
         private readonly PersonWatcherDbContext _context;
         public PersonController(PersonWatcherDbContext context) => _context = context;
         [HttpGet]
-        public async Task<IEnumerable<Person>> GetPersons(string searchStr = "", string dateStr = "")
+        public async Task<IEnumerable<Person>> GetPersonsAsync(string searchStr = "", string dateStr = "")
         {
             if (!string.IsNullOrEmpty(dateStr))
             {
@@ -30,15 +30,22 @@ namespace personwatcherapi.Controllers
                     Console.WriteLine(fe.Message);
                 }
             }
+            if (string.IsNullOrWhiteSpace(searchStr) || searchStr.Length < 3)
+            {
+                return new List<Person>();
+            }
             return await _context.Persons.Where(x => x.Name.Contains(searchStr)).OrderBy(x => x.Name).ToListAsync<Person>();
         }
         [HttpGet]
         [Route("Rank")]
-        public async Task<IEnumerable<Person>> GetRanks()
+        public async Task<IEnumerable<Person>> GetRanksAsync()
         {
-            var interestPosList = Calculator.GetInstance().GetCurrentPositionInterests();
-            var persons = await _context.Persons.Where(x=> x.NextStart > DateTime.Now.AddHours(-2) 
-            && x.NextStart < DateTime.Now.AddHours(13)).ToListAsync<Person>();
+            var (sunPose, moonPose) = Calculator.GetInstance().GetInterestingPoses();
+            var distances = _context.Persons.Select(x => new Tuple<int, int>(x.PersonId, x.HowCloseToSunAndMoon(sunPose, moonPose))).ToList();
+            var minDistance = distances.Min(x => x.Item2);
+            var interestingIds = distances.Where(x=>x.Item2 == minDistance).Select(x => x.Item1).ToList();
+            var persons = await _context.Persons.Where(x=> (x.NextStart > DateTime.Now.AddHours(-1) 
+            && x.NextStart < DateTime.Now.AddHours(13)) || interestingIds.Contains(x.PersonId)).ToListAsync<Person>();
             var placeIds = persons.Select(x => x.PlaceId).ToList();
             return Calculator.GetInstance().Ranks(persons, _context.Places.Where(x=>placeIds.Contains(x.PlaceId)));
         }
@@ -52,7 +59,7 @@ namespace personwatcherapi.Controllers
         }
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Create(Person person)
+        public async Task<IActionResult> CreateAsync(Person person)
         {
             Calculator.GetInstance().TransformPerson(ref person);
             person.Place = null;
@@ -65,7 +72,7 @@ namespace personwatcherapi.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update(int id, Person person)
+        public async Task<IActionResult> UpdateAsync(int id, Person person)
         {
             if (id != person.PersonId) return BadRequest();
 
