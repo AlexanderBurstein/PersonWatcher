@@ -56,9 +56,27 @@ namespace personwatcherapi.Models
         public Place Place { get; set; }
         [NotMapped]
         public string ExtraInfo { get; set; }
-        public int HowCloseToSunAndMoon(int sunPose, int moonPose)
+        public int HowCloseToSunAndMoon(int[] contactPoints, int[] oppositePoints)
         {
-            return 12 * (this.SunPos >= sunPose ? this.SunPos - sunPose : 360) + (this.MoonPos >= moonPose && this.MoonPos / 30 == moonPose / 30 ? this.MoonPos - moonPose : 360);
+            int contacts = (contactPoints.Contains(SunPos) ? 1 : 0) +
+                (contactPoints.Contains(MoonPos) ? 1 : 0) +
+                (contactPoints.Contains(MercuryPos) ? 1 : 0) +
+                (contactPoints.Contains(VenusPos) ? 1 : 0) +
+                (contactPoints.Contains(MarsPos) ? 1 : 0) +
+                (contactPoints.Contains(JupiterPos) ? 1 : 0) +
+                (contactPoints.Contains(SaturnPos) ? 1 : 0) +
+                (contactPoints.Contains(UranusPos) ? 1 : 0) +
+                (contactPoints.Contains(NeptunePos) ? 1 : 0);
+            int opposites = (oppositePoints.Contains(SunPos) ? 1 : 0) +
+                (oppositePoints.Contains(MoonPos) ? 1 : 0) +
+                (oppositePoints.Contains(MercuryPos) ? 1 : 0) +
+                (oppositePoints.Contains(VenusPos) ? 1 : 0) +
+                (oppositePoints.Contains(MarsPos) ? 1 : 0) +
+                (oppositePoints.Contains(JupiterPos) ? 1 : 0) +
+                (oppositePoints.Contains(SaturnPos) ? 1 : 0) +
+                (oppositePoints.Contains(UranusPos) ? 1 : 0) +
+                (oppositePoints.Contains(NeptunePos) ? 1 : 0);
+            return Math.Max(contacts, opposites);
         }
     }
     public enum EventType

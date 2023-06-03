@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using personwatcherapi.Data;
 using personwatcherapi.Engine;
+using personwatcherapi.Extensions;
 using personwatcherapi.Models;
 using System.Net;
 using System.Text;
@@ -18,34 +20,41 @@ namespace personwatcherapi.Controllers
         [HttpGet]
         public async Task<IEnumerable<Person>> GetPersonsAsync(string searchStr = "", string dateStr = "")
         {
+            var (contacts, opposites) = Calculator.GetInstance().GetInterestingPoses();
             if (!string.IsNullOrEmpty(dateStr))
             {
                 try
                 {
                     var dateSearch = DateTime.Parse(dateStr);
-                    return await _context.Persons.Where(x => x.Birthdate > dateSearch.AddDays(-3) && x.Birthdate < dateSearch.AddDays(3)).OrderBy(x => x.Name).ToListAsync<Person>();
+                    return await _context.Persons.Where(x => x.Birthdate > dateSearch.AddDays(-3) && x.Birthdate < dateSearch.AddDays(3)).OrderBy(x => x.Name)
+                        .SelectAsync(async x => await UsefulExtensions.ModifyName(x, contacts, opposites), 1);
                 }
                 catch (FormatException fe)
                 {
                     Console.WriteLine(fe.Message);
                 }
             }
+
             if (string.IsNullOrWhiteSpace(searchStr) || searchStr.Length < 3)
             {
                 return new List<Person>();
             }
-            return await _context.Persons.Where(x => x.Name.Contains(searchStr)).OrderBy(x => x.Name).ToListAsync<Person>();
+            return await _context.Persons.Where(x => x.Name.Contains(searchStr)).OrderBy(x => x.Name)
+                .SelectAsync(async x => await UsefulExtensions.ModifyName(x, contacts, opposites), 1);
+
+
         }
         [HttpGet]
         [Route("Rank")]
         public async Task<IEnumerable<Person>> GetRanksAsync()
         {
-            var (sunPose, moonPose) = Calculator.GetInstance().GetInterestingPoses();
-            var distances = _context.Persons.Select(x => new Tuple<int, int>(x.PersonId, x.HowCloseToSunAndMoon(sunPose, moonPose))).ToList();
-            var minDistance = distances.Min(x => x.Item2);
-            var interestingIds = distances.Where(x=>x.Item2 == minDistance).Select(x => x.Item1).ToList();
-            var persons = await _context.Persons.Where(x=> (x.NextStart > DateTime.Now.AddHours(-1) 
-            && x.NextStart < DateTime.Now.AddHours(13)) || interestingIds.Contains(x.PersonId)).ToListAsync<Person>();
+            var (contacts, opposites) = Calculator.GetInstance().GetInterestingPoses();
+            var distances = _context.Persons.Where(x => x.NextStart < DateTime.Now.AddHours(2))
+                .Select(x => new Tuple<int, int>(x.PersonId, x.HowCloseToSunAndMoon(contacts, opposites))).ToList();
+            var maxDistance = distances.Max(x => x.Item2);
+            var interestingId = distances.Where(x=>x.Item2 == maxDistance).Min(x => x.Item1);
+            var persons = await _context.Persons.Where(x=> x.NextStart < DateTime.Now.AddHours(2) &&
+                (x.NextStart > DateTime.Now.AddHours(-3) || interestingId == x.PersonId)).ToListAsync<Person>();
             var placeIds = persons.Select(x => x.PlaceId).ToList();
             return Calculator.GetInstance().Ranks(persons, _context.Places.Where(x=>placeIds.Contains(x.PlaceId)));
         }
