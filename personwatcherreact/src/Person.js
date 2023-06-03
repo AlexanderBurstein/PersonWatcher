@@ -69,7 +69,7 @@ export class Person extends Component {
                         {persons.map(person=>
                             <tr key={person.personId}>
                                 <td>{person.eventType}</td>
-                                <td>{person.name}</td>
+                                <td>{person.eventPredictability} {person.name}</td>
                                 <td>{moment(person.nextStart).calendar()}</td>
                                 <td>
                                     <ButtonToolbar>

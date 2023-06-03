@@ -34,7 +34,7 @@ namespace personwatcherapi.Extensions
         {
             return Task.Factory.StartNew(() =>
             {
-                person.Name = $"{person.HowCloseToSunAndMoon(pros, contras)} {person.Name}";
+                person.EventPredictability = person.HowCloseToSunAndMoon(pros, contras);
                 return person;
             });
         }
