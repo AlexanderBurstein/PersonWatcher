@@ -56,31 +56,47 @@ namespace personwatcherapi.Models
         public Place Place { get; set; }
         [NotMapped]
         public string ExtraInfo { get; set; }
+        [NotMapped]
+        public double HowClose { get; set; }
         public int HowCloseToSunAndMoon(int[] contactPoints, int[] oppositePoints)
         {
-            int contacts = (contactPoints.Contains(SunPos) ? 1 : 0) +
-                (contactPoints.Contains(MoonPos) ? 1 : 0) +
-                (contactPoints.Contains(MercuryPos) ? 1 : 0) +
-                (contactPoints.Contains(VenusPos) ? 1 : 0) +
-                (contactPoints.Contains(MarsPos) ? 1 : 0) +
-                (contactPoints.Contains(JupiterPos) ? 1 : 0) +
-                (contactPoints.Contains(SaturnPos) ? 1 : 0) +
-                (contactPoints.Contains(UranusPos) ? 1 : 0) +
-                (contactPoints.Contains(NeptunePos) ? 1 : 0);
-            int opposites = (oppositePoints.Contains(SunPos) ? 1 : 0) +
-                (oppositePoints.Contains(MoonPos) ? 1 : 0) +
-                (oppositePoints.Contains(MercuryPos) ? 1 : 0) +
-                (oppositePoints.Contains(VenusPos) ? 1 : 0) +
-                (oppositePoints.Contains(MarsPos) ? 1 : 0) +
-                (oppositePoints.Contains(JupiterPos) ? 1 : 0) +
-                (oppositePoints.Contains(SaturnPos) ? 1 : 0) +
-                (oppositePoints.Contains(UranusPos) ? 1 : 0) +
-                (oppositePoints.Contains(NeptunePos) ? 1 : 0);
+            var (contacts, opposites) = HowCloseAndFar(contactPoints, oppositePoints);
             return Math.Max(contacts, opposites);
+        }
+        public (int, int) HowCloseAndFar(int[] contactPoints, int[] oppositePoints)
+        {
+            int contacts = GetPowerOfPoint(SunPos, contactPoints) +
+                GetPowerOfPoint(MoonPos, contactPoints) +
+                GetPowerOfPoint(MercuryPos, contactPoints) +
+                GetPowerOfPoint(VenusPos, contactPoints) +
+                GetPowerOfPoint(MarsPos, contactPoints) +
+                GetPowerOfPoint(JupiterPos, contactPoints) +
+                GetPowerOfPoint(SaturnPos, contactPoints) +
+                GetPowerOfPoint(UranusPos, contactPoints) +
+                GetPowerOfPoint(NeptunePos, contactPoints);
+            int opposites = GetPowerOfPoint(SunPos, oppositePoints) +
+                GetPowerOfPoint(MoonPos, oppositePoints) +
+                GetPowerOfPoint(MercuryPos, oppositePoints) +
+                GetPowerOfPoint(VenusPos, oppositePoints) +
+                GetPowerOfPoint(MarsPos, oppositePoints) +
+                GetPowerOfPoint(JupiterPos, oppositePoints) +
+                GetPowerOfPoint(SaturnPos, oppositePoints) +
+                GetPowerOfPoint(UranusPos, oppositePoints) +
+                GetPowerOfPoint(NeptunePos, oppositePoints);
+            return (contacts, opposites);
+        }
+        private int GetPowerOfPoint(int pos, int[] checkingPoints)
+        {
+            int result = 0;
+            if (checkingPoints.Contains(pos))
+            {
+                result = checkingPoints.Count() - Array.IndexOf(checkingPoints, pos);
+            }
+            return result;
         }
     }
     public enum EventType
     {
         Single, TeamLead, TeamPlayer
     }
-}
+}                                                                                                                    

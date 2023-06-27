@@ -30,9 +30,9 @@ function App() {
   return (
     <BrowserRouter>
     <div className="container">
-     <h3 className="m-3 d-flex justify-content-center astro">
+     <h4 className="m-4 d-flex justify-content-center astro">
        {header}
-     </h3>
+     </h4>
 
      <Navigation/>
 

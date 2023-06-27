@@ -30,13 +30,9 @@ namespace personwatcherapi.Extensions
             }
         }
 
-        public static Task<Person> ModifyName(Person person, int[] pros, int[] contras)
+        public static string ToMinutes(this double num)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                person.EventPredictability = person.HowCloseToSunAndMoon(pros, contras);
-                return person;
-            });
+            return Math.Floor(num).ToString("N0") + "^" + (int)(num * 60) % 60;
         }
     }
 }

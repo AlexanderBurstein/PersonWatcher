@@ -1,28 +1,27 @@
-import React, {Component} from "react";
+import React, {Component} from 'react';
 import {Modal, Button, Row, Col, Form} from 'react-bootstrap';
-import {PlaceTypeahead} from './PlaceTypeahead';
-import { ToastContainer, toast} from 'react-toastify';
+import PlaceTypeahead from './PlaceTypeahead';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import moment from 'moment';
 
-export class AddPersonModal extends Component {
-    constructor(props){
+export class EditPersonModal extends Component<{ [key: string]: any}, { [key: string]: any}> {
+    constructor(props: { [key: string]: any}){
         super(props);
+        this.state = {
+            place:null
+        }
         this.handleSubmit=this.handleSubmit.bind(this);
     }
-    state = {
-        place: null
-    }
 
-    handleChangePlaceIdValue=event=>this.setState({
+    handleChangePlaceIdValue=(event:any)=>this.setState({
         place:event.selected.length>0?
         {placeId:event.selected[0].placeId,
         placeName:event.selected[0].placeName}:null});
 
-    handleSubmit(event){
+    handleSubmit(event:any){
         event.preventDefault();
-        fetch(process.env.REACT_APP_API+'person',{
-            method:'POST',
+        fetch(process.env.REACT_APP_API+'person/' + this.props.personid ,{
+            method: 'PUT',
             headers:{
                 'Accept':'application/json',
                 'Content-Type':'application/json'
@@ -56,17 +55,15 @@ export class AddPersonModal extends Component {
         .then(res=>res.json())
         .then((result)=>{
             console.log(result);
-            toast.success(result.eventPredictability +
-                " ; " + result.venusPos +
-                " ; " + moment(new Date()).add(result.uranusPos, 'minute').format('HH:mm'));
+            toast.success(result.extraInfo);
             this.props.onHide(event.target.Birthdate.value);
         },
         (error)=>{
             alert('failed');
         })
     }
-    clickClose(event){
-        this.props.onHide('');
+    clickClose(event:any){
+        this.props.onHide(this.props.birthdate);
    }
     render(){
         return(
@@ -83,16 +80,23 @@ export class AddPersonModal extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <Row>
-                            <Col sm={8}>
+                            <Col sm={12}>
                                 <Form onSubmit={this.handleSubmit}>
+                                    <Form.Group controlId="PersonId">
+                                        <Form.Label>PersonId</Form.Label>
+                                        <Form.Control type="text" name="PersonId" required
+                                        disabled
+                                        defaultValue={this.props.personid} 
+                                        placeholder="PersonName"/>
+                                    </Form.Group>
                                     <Form.Group controlId="PersonName">
                                         <Form.Label>Person Name</Form.Label>
                                         <Form.Control type="text" name="PersonName" required
-                                         placeholder="PersonName"/>
+                                         defaultValue={this.props.personname}/>
                                     </Form.Group>
                                     <Form.Group controlId="EventType">
                                         <Form.Label>Event Type</Form.Label>
-                                        <Form.Control as="select" >
+                                        <Form.Control as="select">
                                             <option value="0">0</option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
@@ -101,15 +105,17 @@ export class AddPersonModal extends Component {
                                     <Form.Group controlId="EventPredictability">
                                         <Form.Label>Predictability</Form.Label>
                                         <Form.Control type="number" name="EventPredictability" required
-                                        defaultValue="0" />
+                                        defaultValue={this.props.eventpredictability} />
                                     </Form.Group>
                                     <Form.Group controlId="Birthdate">
                                         <Form.Label>Birthdate</Form.Label>
-                                        <Form.Control type="datetime-local"/>
+                                        <Form.Control type="datetime-local"
+                                        defaultValue={this.props.birthdate}/>
                                     </Form.Group>
                                     <Form.Group controlId="NextStart">
                                         <Form.Label>Next Start</Form.Label>
-                                        <Form.Control type="datetime-local"/>
+                                        <Form.Control type="datetime-local"
+                                        defaultValue={this.props.nextstart}/>
                                     </Form.Group>
                                     <Form.Group controlId="PlaceId">
                                         <Form.Label>Place</Form.Label>

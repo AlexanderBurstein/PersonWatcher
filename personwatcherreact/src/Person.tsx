@@ -2,19 +2,37 @@ import React, {Component} from 'react';
 import { ButtonToolbar, Button, Table } from 'react-bootstrap';
 import {AddPersonModal} from './AddPersonModal';
 import { EditPersonModal } from './EditPersonModal';
-import SearchBar from './SearchBar.js';
-
+import SearchBar from './SearchBar';
+import {PersonData} from './PersonData';
 import moment from 'moment';
 const SEARCH_PERSON_URI = process.env.REACT_APP_API+'Person';
 
-export class Person extends Component {
+type personTypes = {
+  [key: string]: any
+};
+type defaultPersonProps = {
+  persons:PersonData[], 
+  selected:PersonData,
+  isLoading:boolean, 
+  AppModalShow:boolean, 
+  EditModalShow:boolean,
+  keyword: string
+};
 
-    constructor(props) {
+export class Person extends Component<personTypes, defaultPersonProps> {
+  constructor(props:personTypes){
         super(props);
-        this.state={persons:[], isLoading:false, AppModalShow:false, EditModalShow:false};
+        this.state={
+          persons:[] as PersonData[], 
+          selected: {} as PersonData,
+          isLoading:false, 
+          AppModalShow:false, 
+          EditModalShow:false,
+          keyword:''
+        };
     }
 
-    _handleSearch = query => {
+    _handleSearch = (query: string) => {
         this.setState({ isLoading: true });
         this.makeAndHandleRequest(query).then(({ opts }) => {
           this.setState(
@@ -24,10 +42,11 @@ export class Person extends Component {
               persons: opts
             }
           );
+          
         });
       };
     
-      _birthdaySearch = dateStr => {
+      _birthdaySearch = (dateStr:string) => {
         this.setState({ isLoading: true });
         this.makeAndHandleRequest("", dateStr).then(({ opts }) => {
           this.setState(
@@ -39,7 +58,7 @@ export class Person extends Component {
         });
       };
 
-       makeAndHandleRequest(query, dateStr, page = 1) {
+       makeAndHandleRequest(query: string, dateStr: string = '', page = 1) {
         return fetch(`${SEARCH_PERSON_URI}?searchStr=${query}&dateStr=${dateStr}`)
           .then(resp => resp.json())
           .then(data => {
@@ -50,12 +69,11 @@ export class Person extends Component {
       }
 
     render() {
-        const {persons, personid, personname, eventtype, eventpredictability, birthdate, nextstart, keyword}=this.state;
-        let addModalClose=dateStr=>{this._birthdaySearch(dateStr);this.setState({addModalShow:false, keyword:''})};
-        let editModalClose=dateStr=>{this._birthdaySearch(dateStr);this.setState({editModalShow:false, keyword:''})};
+        let addModalClose=(dateStr:string)=>{this._birthdaySearch(dateStr);this.setState({AppModalShow:false, keyword:''})};
+        let editModalClose=(dateStr:string)=>{this._birthdaySearch(dateStr);this.setState({EditModalShow:false, keyword:''})};
             return (
             <div >
-                <SearchBar keyword={keyword} onChange={(e) => {this._handleSearch(e);}}/>
+                <SearchBar keyword={this.state.keyword} searchDeals={(e:any) => {this._handleSearch(e);}}/>
                 <Table className="mt-4" striped bordered hover size="sm">
                     <thead>
                         <tr>
@@ -66,7 +84,7 @@ export class Person extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {persons.map(person=>
+                        {this.state.persons.map(person=>
                             <tr key={person.personId}>
                                 <td>{person.eventType}</td>
                                 <td>{person.eventPredictability} {person.name}</td>
@@ -74,13 +92,10 @@ export class Person extends Component {
                                 <td>
                                     <ButtonToolbar>
                                         <Button className="mr-2" variant="info"
-                                        onClick={()=>this.setState({editModalShow:true,
-                                            personid:person.personId,
-                                            personname:person.name,
-                                            eventype:person.eventType,
-                                            eventpredictability:person.eventPredictability,
-                                            birthdate:person.birthdate,
-                                            nextstart:person.nextStart})}>
+                                        onClick={()=>this.setState({
+                                            EditModalShow:true,
+                                            selected: person
+                                            })}>
                                                 Edit
                                             </Button>
 
@@ -92,23 +107,23 @@ export class Person extends Component {
 
                 <ButtonToolbar>
                     <Button variant='primary'
-                    onClick={()=>this.setState({addModalShow:true})}>
+                    onClick={()=>this.setState({AppModalShow:true})}>
                         Add Person
                     </Button>
 
-                    <AddPersonModal show={this.state.addModalShow}
+                    <AddPersonModal show={this.state.AppModalShow}
                     onHide={addModalClose}
                     personid="0"
                     personname=""
                     eventtype="0"/>
-                    <EditPersonModal show={this.state.editModalShow}
+                    <EditPersonModal show={this.state.EditModalShow}
                             onHide={editModalClose}
-                            personid={personid}
-                            personname={personname}
-                            eventtype={eventtype}
-                            eventpredictabilty={eventpredictability}
-                            birthdate={birthdate}
-                            nextstart={nextstart}/>
+                            personid={this.state.selected.personId}
+                            personname={this.state.selected.name}
+                            eventtype={this.state.selected.eventType}
+                            eventpredictabilty={this.state.selected.eventPredictability}
+                            birthdate={this.state.selected.birthdate}
+                            nextstart={this.state.selected.nextStart}/>
                 </ButtonToolbar>
             </div>
         )
