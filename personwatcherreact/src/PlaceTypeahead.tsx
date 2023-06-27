@@ -7,7 +7,6 @@ const SEARCH_URI = process.env.REACT_APP_API+'Place';
 export interface PlaceOption {
   placeId: number;
   placeName: string;
-  setValue: (value: PlaceOption) => void;
 };
 
 type propTypes = {
@@ -40,17 +39,9 @@ export default class PlaceTypeahead extends React.Component<propTypes, defaultPr
     });
   };
 
-  getOptions(items:Array<PlaceOption>) {
-    return items.map((i: PlaceOption) => {
-      return new Option(i.placeName, i.placeId.toString());
-    });
-  };
-
-  getPlaceOptions(items:any[]) {
+  getPlaceOptions(items:any[]):PlaceOption[] {
     return items.map((i: any) => {
-      var result = new Array<PlaceOption>();
-      result.push({placeId:Number(i.value), placeName:i.text, setValue:(value:PlaceOption) => {}});
-      this.setState({options: result});
+      return {placeId:i.placeId, placeName:i.placeName};
     });
   };
    makeAndHandleRequest(query: string, page = 1) {
@@ -74,9 +65,9 @@ export default class PlaceTypeahead extends React.Component<propTypes, defaultPr
         labelKey="placeName"
         clearButton
         onSearch={this._handleSearch}
-        onChange={(selected) => {this.getPlaceOptions(selected);
+        onChange={(sel) => {let selected = this.getPlaceOptions(sel);this.setState({selected});
           this.props.onChangeValue({selected})}}
-        options={this.getOptions(this.state.options)}
+        options={this.state.options}
         placeholder="Choose a place..."
       />
     );
