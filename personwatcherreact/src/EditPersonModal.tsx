@@ -54,7 +54,6 @@ export class EditPersonModal extends Component<{ [key: string]: any}, { [key: st
         })
         .then(res=>res.json())
         .then((result)=>{
-            console.log(result);
             toast.success(result.extraInfo);
             this.props.onHide(event.target.Birthdate.value);
         },

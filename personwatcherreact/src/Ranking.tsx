@@ -2,18 +2,25 @@ import React, {Component} from 'react';
 import { Table } from 'react-bootstrap';
 import moment from 'moment';
 import {PersonData} from './PersonData';
+import { EventImageModal } from './EventImageModal';
 
 type rankingTypes = {
     [key: string]: any
   };
 type defaultRankingProps = {
     persons:PersonData[], 
+    selected:PersonData
+    showEventModal: boolean
   };
 
 export class Ranking extends Component<rankingTypes, defaultRankingProps> {
     constructor(props:rankingTypes){
         super(props);
-        this.state={persons:[] as PersonData[]};
+        this.state={
+            persons:[] as PersonData[],
+            selected: {} as PersonData,
+            showEventModal:false
+        };
     }
 
     refreshList(){
@@ -29,6 +36,7 @@ export class Ranking extends Component<rankingTypes, defaultRankingProps> {
     }
 
     render() {
+        let addModalClose=(dateStr:string)=>{this.setState({showEventModal:false})};
            return (
             <div >
                 <Table className="mt-4" striped bordered hover size="sm">
@@ -45,7 +53,10 @@ export class Ranking extends Component<rankingTypes, defaultRankingProps> {
                     </thead>
                     <tbody>
                         {this.state.persons.map(person=>
-                            <tr key={person.personId}>
+                            <tr key={person.personId} onClick={()=>this.setState({
+                                    showEventModal:true,
+                                    selected:person
+                                })}>
                                 <td>{person.name}</td>
                                 <td>{moment(person.nextStart).calendar()}</td>
                                 <td>{person.sunPos}</td>
@@ -64,6 +75,8 @@ export class Ranking extends Component<rankingTypes, defaultRankingProps> {
                             </tr>)}
                     </tbody>
                 </Table>
+                <EventImageModal personId={this.state.selected.personId} 
+                    onHide={addModalClose} show={this.state.showEventModal}/>
             </div>
         )
     }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json.Serialization;
 using personwatcherapi.Data; 
 
@@ -29,6 +30,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseFileServer(new FileServerOptions
+{
+    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(app.Environment.ContentRootPath, "Public")),
+    RequestPath = "/images",
+    EnableDirectoryBrowsing = true
+});
 
 app.UseHttpsRedirection();
 

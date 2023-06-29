@@ -17,7 +17,13 @@ namespace personwatcherapi.Controllers
     public class PersonController : ControllerBase
     {
         private readonly PersonWatcherDbContext _context;
-        public PersonController(PersonWatcherDbContext context) => _context = context;
+        private readonly IWebHostEnvironment _env;
+
+        public PersonController(PersonWatcherDbContext context, IWebHostEnvironment env)
+        {
+            _context = context; 
+            _env = env;
+        }
         [HttpGet]
         public async Task<IEnumerable<Person>> GetPersonsAsync(string searchStr = "", string dateStr = "")
         {
@@ -58,9 +64,9 @@ namespace personwatcherapi.Controllers
         public async Task<IEnumerable<Person>> GetRanksAsync()
         {
             var (contacts, opposites) = Calculator.GetInstance().GetInterestingPoses();
-            var placeIds = _context.Persons.Where(x => x.NextStart < DateTime.Now.AddHours(1) && x.NextStart > DateTime.Now.AddMinutes(-118))
+            var placeIds = _context.Persons.Where(x => x.NextStart < DateTime.Now.AddHours(1) && x.NextStart > DateTime.Now.AddMinutes(-100))
                 .Select(x => x.PlaceId).Distinct().ToList();
-            var persons = await _context.Persons.Where(x => x.NextStart < DateTime.Now.AddHours(1) && x.NextStart > DateTime.Now.AddMinutes(-118)).ToListAsync();
+            var persons = await _context.Persons.Where(x => x.NextStart < DateTime.Now.AddHours(1) && x.NextStart > DateTime.Now.AddMinutes(-100)).ToListAsync();
             return Calculator.GetInstance().Ranks(persons, _context.Places.Where(x=>placeIds.Contains(x.PlaceId)));
         }
         [HttpGet("id")]
@@ -101,6 +107,18 @@ namespace personwatcherapi.Controllers
         public IActionResult GetHeader()
         {
             return Content("{\"data\": \"" + Calculator.GetInstance().GetHeader() + "\"}");
+        }
+        [HttpGet]
+        [Route("Visuals")]
+        [ProducesResponseType(typeof(PhysicalFileResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetVisuals(int personId)
+        {
+            var person = _context.Persons.Find(personId);
+            var participants = _context.Persons.Where(x => x.PlaceId == person.PlaceId && x.NextStart == person.NextStart).ToList();
+            var imagePath = Calculator.GetInstance().GetVisualImage(participants, _context.Places.Find(person.PlaceId),
+                Path.Combine(_env.ContentRootPath, "Public", "fonts"));
+            return PhysicalFile(Path.Combine(_env.ContentRootPath, "Public", "images", imagePath), "image/jpeg");
         }
     }
 }
